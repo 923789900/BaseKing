@@ -16,12 +16,14 @@
 #include<time.h>
 #include<sys/types.h>
 
+
 using namespace std;
 enum logType{
     property,
     openFile,
     registerNative,
-    total
+    total,
+    socket
 };
 static class k_Log {
 public:

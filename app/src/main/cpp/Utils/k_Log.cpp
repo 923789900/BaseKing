@@ -78,6 +78,8 @@ FILE *&k_Log::getLogtype(logType type) {
         case logType::registerNative :
             return m_register;
             break;
+        case logType::socket:
+            return m_socket;
         default:
             return m_total;
     }
