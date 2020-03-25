@@ -2,6 +2,7 @@
 // Created by win10 on 2020/3/23.
 //
 
+#include <sys/socket.h>
 #include "SocketManager.h"
 
 prt_socket sc_socket = nullptr;
@@ -74,7 +75,7 @@ int SocketManager::Call_socket(int __af, int __type, int __protocol) {
     keyValue param2 = {"protocolType",to_string(__protocol).c_str()};
     params->push_back(param);
 
-    k_Log::f_writeLog(logType::socket,*params);
+    k_Log::f_writeLog(logType::socketM,*params);
 
     delete params;
     return Result;
@@ -89,10 +90,10 @@ int SocketManager::Call_Connection(int _fd, const struct sockaddr * _address, so
     keyValue param = {"socketFlag",to_string(_fd).c_str()};
     params->push_back(param);
 
-    keyValue param1 = {"Socketaddr",_address->sa_data};
-    params->push_back(param);
+    //keyValue param1 = {"Socketaddr",_address->sa_data};
+    //params->push_back(param);
 
-    k_Log::f_writeLog(logType::socket,*params);
+    k_Log::f_writeLog(logType::socketM,*params);
 
     delete params;
 

@@ -7,7 +7,6 @@
 
 #include <AndHook.h>
 #include <k_Log.h>
-#include <sys/socket.h>
 
 
 typedef int (*prt_socket)(int __af, int __type, int __protocol);

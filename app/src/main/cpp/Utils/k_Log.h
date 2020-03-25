@@ -23,7 +23,7 @@ enum logType{
     openFile,
     registerNative,
     total,
-    socket
+    socketM
 };
 static class k_Log {
 public:
