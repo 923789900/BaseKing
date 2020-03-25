@@ -9,6 +9,7 @@ static FILE *m_property;
 static FILE *m_openfile;
 static FILE *m_register;
 static FILE *m_total;
+static FILE *m_socket;
 
 /**
  * write log to file
@@ -128,6 +129,7 @@ bool k_Log::openFile(string &dirPath) {
     string property = "/property.txt";
     string registerNatives = "/registerNatives.txt";
     string total = "/total.txt";
+    string socketFile = "/socket.txt";
     //---------------------------打开所有文件------------------
     string openFile = dirPath + openFileName;
     char *packageName = const_cast<char *>(openFile.c_str());
@@ -144,6 +146,10 @@ bool k_Log::openFile(string &dirPath) {
     openFile = dirPath + total;
     packageName = const_cast<char *>(openFile.c_str());
     m_total = fopen(packageName, "w");
+    //=====================================
+    openFile = dirPath + socketFile;
+    packageName = const_cast<char *>(openFile.c_str());
+    m_socket = fopen(packageName, "w");
 
     if (NULL != m_openfile && NULL != m_property && NULL != m_register && NULL != m_total) {
         m_canWrite = true;
