@@ -7,8 +7,13 @@
 
 #include <AndHook.h>
 #include <k_Log.h>
+#include <sys/socket.h>
 
-typedef int (*connect)(int __af, int __type, int __protocol);
+
+typedef int (*prt_socket)(int __af, int __type, int __protocol);
+
+typedef int (*ptr_connection)(int __fd, const struct sockaddr *__addr, socklen_t __addr_length);
+
 
 class SocketManager {
 
@@ -16,8 +21,13 @@ public:
     SocketManager();
 
 private:
-   void loadHookStart();
-   static int Call_SocketConnect(int __af, int __type, int __protocol);
+    void loadHookStart_socket();
+
+    void loadHookStart_connection();
+
+    static int Call_socket(int __af, int __type, int __protocol);
+
+    static int Call_Connection(int, const struct sockaddr *, socklen_t);
 };
 
 

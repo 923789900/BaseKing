@@ -9,10 +9,12 @@
 #include "HookItems/SystemGetProperty.h"
 #include "Utils/k_Log.h"
 #include <sys/socket.h>
+#include "SocketManager.h"
 
 static RegisterNatives *registerNatives = nullptr;
 static OpenFileat *HK_OpenFile = nullptr;
 static SystemGetProperty *systemGet = nullptr;
+static SocketManager *socketManager = nullptr;
 static bool hookState = false;
 
 JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm,void *s)
@@ -39,6 +41,9 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm,void *s)
         HK_OpenFile = new OpenFileat();
         //注册__system_property_get
         systemGet = new SystemGetProperty();
+        //注册socket connect
+        socketManager = new SocketManager();
+
     }
 
 
