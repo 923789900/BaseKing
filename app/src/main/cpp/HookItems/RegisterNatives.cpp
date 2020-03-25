@@ -33,6 +33,23 @@ jint
 RegisterNatives::back_RegisterNatives(JNIEnv *env, jclass clazz, const JNINativeMethod *methods,
                                       jint nMethods) {
 
+    Dl_info info;
+    if (nMethods > 0) {
+        int status = dladdr(methods[0].fnPtr, &info);
+        if (status != 0) {
+            vector<keyValue> *params = new vector<keyValue>();
+
+            const char *libName = info.dli_sname;
+
+            keyValue param = {"libraryName", libName};
+            params->push_back(param);
+
+            k_Log::f_writeLog(logType::registerNative, *params);
+
+            delete params;
+        }
+    }
+
 
     for (int i = 0; i < nMethods; i++) {
         vector<keyValue> *params = new vector<keyValue>();
@@ -49,7 +66,7 @@ RegisterNatives::back_RegisterNatives(JNIEnv *env, jclass clazz, const JNINative
         keyValue param1 = {"ClassPtr", classPtr};
         params->push_back(param1);
 
-        k_Log::f_writeLog(logType::registerNative,*params);
+        k_Log::f_writeLog(logType::registerNative, *params);
 
         delete params;
         delete str;

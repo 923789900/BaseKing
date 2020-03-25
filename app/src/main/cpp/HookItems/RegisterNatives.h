@@ -7,6 +7,7 @@
 
 #include <jni.h>
 #include "k_Log.h"
+#include <dlfcn.h>
 
 
 typedef jint (*PRegisterNatives)(JNIEnv *,jclass clazz, const JNINativeMethod* methods, jint nMethods);

@@ -34,7 +34,7 @@ void SocketManager::loadHookStart_socket() {
     //AKHookFunction(methodHandle,(void *)&Call_SystemProperty,(void **)&back_SystemGetProperty);
     AKHookFunction(methodHandle,(void *)&Call_socket,(void **)&sc_socket);
     AKCloseImage(imageHandle);
-    king_Log_i("hook->__system_property_read->Success");
+    king_Log_i("hook->socket->Success");
 }
 
 void SocketManager::loadHookStart_connection()  {
@@ -58,7 +58,7 @@ void SocketManager::loadHookStart_connection()  {
     //AKHookFunction(methodHandle,(void *)&Call_SystemProperty,(void **)&back_SystemGetProperty);
     AKHookFunction(methodHandle,(void *)&Call_Connection,(void **)&p_connection);
     AKCloseImage(imageHandle);
-    king_Log_i("hook->__system_property_read->Success");
+    king_Log_i("hook->connect->Success");
 }
 
 
@@ -70,10 +70,10 @@ int SocketManager::Call_socket(int __af, int __type, int __protocol) {
     params->push_back(param);
 
     keyValue param1 = {"SocketType",to_string(__type).c_str()};
-    params->push_back(param);
+    params->push_back(param1);
 
     keyValue param2 = {"protocolType",to_string(__protocol).c_str()};
-    params->push_back(param);
+    params->push_back(param2);
 
     k_Log::f_writeLog(logType::socketM,*params);
 
@@ -84,14 +84,15 @@ int SocketManager::Call_socket(int __af, int __type, int __protocol) {
 int SocketManager::Call_Connection(int _fd, const struct sockaddr * _address, socklen_t _type) {
 
     int status = p_connection(_fd,_address,_type);
-
     vector<keyValue> *params = new vector<keyValue>();
 
     keyValue param = {"socketFlag",to_string(_fd).c_str()};
     params->push_back(param);
 
-    //keyValue param1 = {"Socketaddr",_address->sa_data};
-    //params->push_back(param);
+    const sockaddr addr = *_address;
+    /*char[14] address = addr.sa_data;
+    keyValue param1 = {"Socketaddr",new string(address).c_str()};
+    params->push_back(param1);*/
 
     k_Log::f_writeLog(logType::socketM,*params);
 
