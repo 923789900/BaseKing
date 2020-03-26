@@ -33,26 +33,17 @@ jint
 RegisterNatives::back_RegisterNatives(JNIEnv *env, jclass clazz, const JNINativeMethod *methods,
                                       jint nMethods) {
 
-    Dl_info info;
-    if (nMethods > 0) {
-        int status = dladdr(methods[0].fnPtr, &info);
-        if (status != 0) {
-            vector<keyValue> *params = new vector<keyValue>();
+   if(nMethods < 0)
+   {
+       k_Log::f_writeLog(logType::registerNative,"RegisterNative 0");
+       return nMethods;
+   }
 
-            const char *libName = info.dli_sname;
-
-            keyValue param = {"libraryName", libName};
-            params->push_back(param);
-
-            k_Log::f_writeLog(logType::registerNative, *params);
-
-            delete params;
-        }
-    }
-
+    char* name =  getLibraryName(methods[0].fnPtr);
+    vector<keyValue> *params = new vector<keyValue>();
 
     for (int i = 0; i < nMethods; i++) {
-        vector<keyValue> *params = new vector<keyValue>();
+
 
         string *str = new string(methods[i].name);
         string *str2 = new string(methods[i].signature);
@@ -66,12 +57,12 @@ RegisterNatives::back_RegisterNatives(JNIEnv *env, jclass clazz, const JNINative
         keyValue param1 = {"ClassPtr", classPtr};
         params->push_back(param1);
 
-        k_Log::f_writeLog(logType::registerNative, *params);
-
-        delete params;
         delete str;
         delete str2;
     }
+
+    k_Log::f_writeLog(logType::registerNative,name, *params);
+    delete params;
     return targetBack_RegisterNatives(env, clazz, methods, nMethods);
 }
 
@@ -165,5 +156,18 @@ jobject RegisterNatives::getApplication2(JNIEnv *env) {
     }
 
     return application;
+}
+
+char *RegisterNatives::getLibraryName(void *ftr) {
+    Dl_info info;
+
+    int status = dladdr(ftr, &info);
+    if (status != 0) {
+        vector<keyValue> *params = new vector<keyValue>();
+        const char *libName = info.dli_fname;
+        return const_cast<char *>(libName);
+    }
+
+    return nullptr;
 }
 

@@ -26,6 +26,7 @@ private:
     static PRegisterNatives targetBack_RegisterNatives;
     void loadHookStart();
     static jint back_RegisterNatives(JNIEnv *env,jclass clazz, const JNINativeMethod* methods, jint nMethods);
+    static char* getLibraryName(void *);
 };
 
 

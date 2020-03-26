@@ -161,3 +161,27 @@ bool k_Log::openFile(string &dirPath) {
     return false;
 }
 
+bool k_Log::f_writeLog(logType type, string title, vector<keyValue>& params) {
+    if (!m_canWrite) {
+        king_Log_i("open log file is Failure");
+        return false;
+    }
+    FILE *loac = getLogtype(type);
+    string Result = "\n================================[";
+    string after = "]================================\n";
+    string splitCharactor = " : ";
+    string lineFeed = "\n";
+    const char *header = (Result+title+after).c_str();
+    //写入头
+    fwrite(header, sizeof(char), strlen(header), loac);
+    fflush(loac);
+    //501;
+    for (vector<keyValue>::iterator iter = params.begin(); iter != params.end(); iter++) {
+        string item = (*iter).key + splitCharactor + (*iter).value + lineFeed;
+        fwrite(item.c_str(), sizeof(char), strlen(item.c_str()), loac);
+        fflush(loac);
+    }
+    return true;
+
+}
+

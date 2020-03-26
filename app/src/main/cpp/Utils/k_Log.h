@@ -30,6 +30,7 @@ public:
     static bool init(const char *fileName,JNIEnv *env);
     static bool f_writeLog(logType,vector<keyValue>& params);
     static bool f_writeLog(logType,string message);
+    static bool f_writeLog(logType type,string title,vector<keyValue>& params);
 private:
     static char* getDirPath(char* pName);
     static FILE*& getLogtype(logType);
