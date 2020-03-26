@@ -11,22 +11,17 @@ PRegisterNatives RegisterNatives::targetBack_RegisterNatives = nullptr;
 RegisterNatives::RegisterNatives(JNIEnv *env) {
     this->functions = *(*env).functions;
     loadHookStart();
+    /*    (*env).RegisterNatives;*/
 }
 
 void RegisterNatives::loadHookStart() {
-    //获取jnienv的指针
-    //this->internalEnv->RegisterNatives();
-    //target address
 
     const JNINativeInterface *NativeInterface = &this->functions;
     void *targetAddress = (void *) NativeInterface->RegisterNatives;
-    //king_Log_i("targetAddress %p : ", targetAddress);
     void *callAddress = (void *) &this->back_RegisterNatives;
-    //king_Log_i("callAddress %p : ", callAddress);
-    //call address
+
     void **targetBack = (void **) &targetBack_RegisterNatives;
     AKHookFunction(targetAddress, callAddress, targetBack);
-    //king_Log_i("targetBack_RegisterNatives Ptr_ :  %p ", targetBack);
 }
 
 jint
