@@ -11,21 +11,25 @@
 
 
 typedef jint (*PRegisterNatives)(JNIEnv *,jclass clazz, const JNINativeMethod* methods, jint nMethods);
+typedef jint (JNIEnv::*mp_register)(jclass clazz, const JNINativeMethod* methods,jint nMethods);
+
 
 class RegisterNatives {
 public:
     RegisterNatives(JNIEnv *);
-    static jobject getApplication(JNIEnv *);
+    /*static jobject getApplication(JNIEnv *);
     static jobject getApplication2(JNIEnv *);
     static char* getPackageName(JNIEnv *);
-    static char* jstringToChar(JNIEnv *,jstring);
+    static char* jstringToChar(JNIEnv *,jstring);*/
 private:
     RegisterNatives();
-    JNIEnv internalEnv;
+    static JNIEnv* internalEnv;
     JNINativeInterface functions;
     static PRegisterNatives targetBack_RegisterNatives;
     void loadHookStart();
+    void loadHookStart_ClassRegister();
     static jint back_RegisterNatives(JNIEnv *env,jclass clazz, const JNINativeMethod* methods, jint nMethods);
+    static jint back_cpRegisterNatives(jclass clazz, const JNINativeMethod* methods,jint nMethods);
     static char* getLibraryName(void *);
 };
 

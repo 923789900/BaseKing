@@ -17,13 +17,13 @@ add_library( # Sets the name of the library.
         SHARED
 
         # Provides a relative path to your source file(s).
+        Utils/androidLog.cpp
+        Utils/k_Log.cpp
         HookItems/RegisterNatives.cpp
         HookItems/OpenFileat.cpp
         HookItems/SystemGetProperty.cpp
         HookItems/SocketManager.cpp
-        Utils/androidLog.cpp
-        Utils/k_Log.cpp
-
+        Utils/CurrencyTools.cpp
         Manager.cpp)
 
 # Searches for a specified prebuilt library and stores the path as a

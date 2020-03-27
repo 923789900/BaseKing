@@ -8,7 +8,7 @@
 #include <iostream>
 #include <stdio.h>
 #include "androidLog.h"
-#include "RegisterNatives.h"
+#include "CurrencyUtils.h"
 #include <dirent.h>
 
 

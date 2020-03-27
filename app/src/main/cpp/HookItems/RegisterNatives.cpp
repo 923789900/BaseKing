@@ -7,10 +7,14 @@
 #include "AndHook.h"
 
 PRegisterNatives RegisterNatives::targetBack_RegisterNatives = nullptr;
+static mp_register targetBack_register_class = nullptr;
+JNIEnv* RegisterNatives::internalEnv;
 
 RegisterNatives::RegisterNatives(JNIEnv *env) {
     this->functions = *(*env).functions;
-    loadHookStart();
+    this->internalEnv = env;
+    //loadHookStart();
+    loadHookStart_ClassRegister();
     /*    (*env).RegisterNatives;*/
 }
 
@@ -65,7 +69,7 @@ RegisterNatives::back_RegisterNatives(JNIEnv *env, jclass clazz, const JNINative
  * get context
  * @param env
  * @return
- */
+ *//*
 jobject RegisterNatives::getApplication(JNIEnv *env) {
     jobject application = NULL;
     jclass activity_thread_clz = env->FindClass("android/app/ActivityThread");
@@ -94,11 +98,11 @@ jobject RegisterNatives::getApplication(JNIEnv *env) {
 
 }
 
-/**
+*//**
  * get application Package Name
  * @param env
  * @return
- */
+ *//*
 char *RegisterNatives::getPackageName(JNIEnv *env) {
 
     jobject obj = getApplication(env);
@@ -114,12 +118,12 @@ char *RegisterNatives::getPackageName(JNIEnv *env) {
     return pName;
 }
 
-/**
+*//**
  * jstring to char *
  * @param env
  * @param data
  * @return
- */
+ *//*
 char *RegisterNatives::jstringToChar(JNIEnv *env, jstring data) {
     char *rtn = NULL;
     jclass clsstring = env->FindClass("java/lang/String");
@@ -141,17 +145,17 @@ jobject RegisterNatives::getApplication2(JNIEnv *env) {
     jobject application = NULL;
     jclass activity_thread_clz = env->FindClass("cn/king/admin/Manager");
     if (activity_thread_clz != NULL) {
-        /*jmethodID getApplication = env->GetMethodID(activity_thread_clz, "getApplication",
+        *//*jmethodID getApplication = env->GetMethodID(activity_thread_clz, "getApplication",
                                                     "()Landroid/app/Application;");
         king_Log_i("getApplication 2 : %p",getApplication);
-        application = env->CallStaticObjectMethod(activity_thread_clz, getApplication);*/
+        application = env->CallStaticObjectMethod(activity_thread_clz, getApplication);*//*
         jfieldID app = env->GetStaticFieldID(activity_thread_clz, "app", "android/app/Application");
         application = env->GetStaticObjectField(activity_thread_clz, app);
         return application;
     }
 
     return application;
-}
+}*/
 
 char *RegisterNatives::getLibraryName(void *ftr) {
     Dl_info info;
@@ -164,5 +168,30 @@ char *RegisterNatives::getLibraryName(void *ftr) {
     }
 
     return nullptr;
+}
+
+/**
+ * hook jni class register method
+ * @param clazz
+ * @param methods
+ * @param nMethods
+ * @return
+ */
+jint RegisterNatives::back_cpRegisterNatives(jclass clazz, const JNINativeMethod *methods,jint nMethods) {
+
+    king_Log_i("lalalala");
+    (internalEnv->*targetBack_register_class)(clazz,methods,nMethods);
+    return 0;
+}
+
+void RegisterNatives::loadHookStart_ClassRegister() {
+    mp_register  clsP_register = &JNIEnv::RegisterNatives;
+    /*JNIEnv env = (*internalEnv);
+    //void * target = static_cast<void *>(env.*clsP_register);
+    king_Log_i("lala object method ptr : %p",&target);
+    AKHookFunction(target, (void *)&back_cpRegisterNatives, reinterpret_cast<void **>(&targetBack_register_class));
+    king_Log_i("lala object call method ptr : %p",&back_cpRegisterNatives);
+    king_Log_i("lala object back method ptr : %p",&targetBack_register_class);
+    king_Log_i("lala hook state success");*/
 }
 
