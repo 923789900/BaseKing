@@ -3,7 +3,7 @@
 //
 
 #include "k_Log.h"
-#include "CurrencyUtils.h"
+#include "CurrencyTools.h"
 
 static bool m_canWrite;
 static FILE *m_property;
@@ -45,7 +45,7 @@ bool k_Log::f_writeLog(logType type, vector<keyValue> &params) {
  */
 bool k_Log::init(const char *fileName,JNIEnv *env) {
 
-    char *pName = getPackageName(env,"1");
+    char *pName = CurrencyTools::getPackageName(env,"1");
     king_Log_i("native PackageName : %s", pName);
     char *dir_Path = getDirPath(pName);
     king_Log_i("native Log dirPath : %s", dir_Path);

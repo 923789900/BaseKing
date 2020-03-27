@@ -13,8 +13,8 @@ JNIEnv* RegisterNatives::internalEnv;
 RegisterNatives::RegisterNatives(JNIEnv *env) {
     this->functions = *(*env).functions;
     this->internalEnv = env;
-    //loadHookStart();
-    loadHookStart_ClassRegister();
+    loadHookStart();
+    //loadHookStart_ClassRegister();
     /*    (*env).RegisterNatives;*/
 }
 
@@ -64,98 +64,6 @@ RegisterNatives::back_RegisterNatives(JNIEnv *env, jclass clazz, const JNINative
     delete params;
     return targetBack_RegisterNatives(env, clazz, methods, nMethods);
 }
-
-/**
- * get context
- * @param env
- * @return
- *//*
-jobject RegisterNatives::getApplication(JNIEnv *env) {
-    jobject application = NULL;
-    jclass activity_thread_clz = env->FindClass("android/app/ActivityThread");
-    king_Log_i("getApplication 1");
-    if (activity_thread_clz != NULL) {
-        jmethodID get_Application = env->GetStaticMethodID(activity_thread_clz,
-                                                           "currentActivityThread",
-                                                           "()Landroid/app/ActivityThread;");
-        king_Log_i("getApplication 2");
-        if (get_Application != NULL) {
-            jobject currentActivityThread = env->CallStaticObjectMethod(activity_thread_clz,
-                                                                        get_Application);
-            jmethodID getal = env->GetMethodID(activity_thread_clz, "getApplication",
-                                               "()Landroid/app/Application;");
-            application = env->CallObjectMethod(currentActivityThread, getal);
-            king_Log_i("getApplication 3");
-        }
-    }
-
-    if (application == NULL) {
-        application = getApplication2(env);
-    }
-
-    return application;
-
-
-}
-
-*//**
- * get application Package Name
- * @param env
- * @return
- *//*
-char *RegisterNatives::getPackageName(JNIEnv *env) {
-
-    jobject obj = getApplication(env);
-    if (obj == NULL) {
-        king_Log_i("get application Failure ");
-        return const_cast<char *>("king");
-    }
-    jclass applicationCls = env->GetObjectClass(obj);
-    jmethodID getpackageName = env->GetMethodID(applicationCls, "getPackageName",
-                                                "()Ljava/lang/String;");
-    jstring packageName = (jstring) env->CallObjectMethod(obj, getpackageName);
-    char *pName = jstringToChar(env, packageName);
-    return pName;
-}
-
-*//**
- * jstring to char *
- * @param env
- * @param data
- * @return
- *//*
-char *RegisterNatives::jstringToChar(JNIEnv *env, jstring data) {
-    char *rtn = NULL;
-    jclass clsstring = env->FindClass("java/lang/String");
-    jstring strencode = env->NewStringUTF("utf-8");
-    jmethodID mid = env->GetMethodID(clsstring, "getBytes", "(Ljava/lang/String;)[B");
-    jbyteArray barr = (jbyteArray) env->CallObjectMethod(data, mid, strencode);
-    jsize alen = env->GetArrayLength(barr);
-    jbyte *ba = env->GetByteArrayElements(barr, JNI_FALSE);
-    if (alen > 0) {
-        rtn = (char *) malloc(alen + 1);
-        memcpy(rtn, ba, alen);
-        rtn[alen] = 0;
-    }
-    env->ReleaseByteArrayElements(barr, ba, 0);
-    return rtn;
-}
-
-jobject RegisterNatives::getApplication2(JNIEnv *env) {
-    jobject application = NULL;
-    jclass activity_thread_clz = env->FindClass("cn/king/admin/Manager");
-    if (activity_thread_clz != NULL) {
-        *//*jmethodID getApplication = env->GetMethodID(activity_thread_clz, "getApplication",
-                                                    "()Landroid/app/Application;");
-        king_Log_i("getApplication 2 : %p",getApplication);
-        application = env->CallStaticObjectMethod(activity_thread_clz, getApplication);*//*
-        jfieldID app = env->GetStaticFieldID(activity_thread_clz, "app", "android/app/Application");
-        application = env->GetStaticObjectField(activity_thread_clz, app);
-        return application;
-    }
-
-    return application;
-}*/
 
 char *RegisterNatives::getLibraryName(void *ftr) {
     Dl_info info;
