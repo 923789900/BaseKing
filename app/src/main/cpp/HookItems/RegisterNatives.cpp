@@ -59,12 +59,6 @@ RegisterNatives::back_RegisterNatives(JNIEnv *env, jclass clazz, const JNINative
         keyValue param2 = {"baseAddress", Address};
         params->push_back(param2);
 
-        char staticMethod[20] = {0};
-        sprintf(staticMethod, "%p", reinterpret_cast<void *>(methods[i].fnPtr - baseAddress));
-        keyValue param3 = {"staticMethodAddress", staticMethod};
-        params->push_back(param3);
-
-
 
 
         delete str;
