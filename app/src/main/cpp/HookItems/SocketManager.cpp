@@ -111,11 +111,13 @@ int SocketManager::Call_Connection(int _fd, const struct sockaddr *_address, soc
     int port = ntohs(sock->sin_port);
 
     struct in_addr in  = sock->sin_addr;
-    char str[INET_ADDRSTRLEN];   //INET_ADDRSTRLEN这个宏系统默认定义 16
-    //成功的话此时IP地址保存在str字符串中。
-    inet_ntop(AF_INET,&in, str, sizeof(str));
+    char str[INET_ADDRSTRLEN];
+    inet_ntop(addr.sa_family,&in, str, sizeof(str));
 
-
+    if(addr.sa_family < 1 || addr.sa_family >43 )
+    {
+        sprintf(str,"%d",(short)addr.sa_family);
+    }
     keyValue param2 = {"serverAddress", str};
     params->push_back(param2);
 
@@ -126,11 +128,12 @@ int SocketManager::Call_Connection(int _fd, const struct sockaddr *_address, soc
     params->push_back(param4);
 
 
-
+    //开始连接
     int status = p_connection(_fd, _address, _type);
 
-
-    keyValue param = {"socketFlag", to_string(_fd).c_str()};
+    char flag[15] = {0};
+    sprintf(flag, "%d", _fd);
+    keyValue param = {"socketFlag", flag};
     params->push_back(param);
 
     char state[15] = {0};
