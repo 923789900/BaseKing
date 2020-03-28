@@ -1,13 +1,11 @@
 //
 // Created by win10 on 2020/3/23.
 //
-
-#include <sys/socket.h>
 #include "SocketManager.h"
 
 prt_socket sc_socket = nullptr;
 ptr_connection p_connection = nullptr;
-ptr_addressCast  p_inet_pton = nullptr;
+ptr_addressCast p_inet_pton = nullptr;
 
 SocketManager::SocketManager() {
     loadHookStart_socket();
@@ -82,8 +80,6 @@ void SocketManager::loadHookStart_inet_phon() {
 }
 
 
-
-
 int SocketManager::Call_socket(int __af, int __type, int __protocol) {
     int Result = sc_socket(__af, __type, __protocol);
     vector<keyValue> *params = new vector<keyValue>();
@@ -105,15 +101,41 @@ int SocketManager::Call_socket(int __af, int __type, int __protocol) {
 
 int SocketManager::Call_Connection(int _fd, const struct sockaddr *_address, socklen_t _type) {
 
-    int status = p_connection(_fd, _address, _type);
+
     vector<keyValue> *params = new vector<keyValue>();
+
+    sockaddr_in sin;
+    struct sockaddr addr = (*_address);
+    struct sockaddr_in *sock = ( struct sockaddr_in*)&addr;
+
+    int port = ntohs(sock->sin_port);
+
+    struct in_addr in  = sock->sin_addr;
+    char str[INET_ADDRSTRLEN];   //INET_ADDRSTRLEN这个宏系统默认定义 16
+    //成功的话此时IP地址保存在str字符串中。
+    inet_ntop(AF_INET,&in, str, sizeof(str));
+
+
+    keyValue param2 = {"serverAddress", str};
+    params->push_back(param2);
+
+
+    char L_port[8] = {0};
+    sprintf(L_port, "%d", port);
+    keyValue param4 = {"serverPort", L_port};
+    params->push_back(param4);
+
+
+
+    int status = p_connection(_fd, _address, _type);
+
 
     keyValue param = {"socketFlag", to_string(_fd).c_str()};
     params->push_back(param);
 
-    char state[15] ={0};
-    sprintf(state,"%d",status);
-    keyValue param1 = {"connectStatus",state };
+    char state[15] = {0};
+    sprintf(state, "%d", status);
+    keyValue param1 = {"connectStatus", state};
     params->push_back(param1);
 
     k_Log::f_writeLog(logType::socketM, *params);
@@ -124,7 +146,7 @@ int SocketManager::Call_Connection(int _fd, const struct sockaddr *_address, soc
 }
 
 int SocketManager::Call_inet_pton(int af, const char *src, void *dst) {
-    int Result = p_inet_pton(af,src,dst);
+    int Result = p_inet_pton(af, src, dst);
 
     vector<keyValue> *params = new vector<keyValue>();
 
@@ -132,14 +154,14 @@ int SocketManager::Call_inet_pton(int af, const char *src, void *dst) {
     params->push_back(param);
 
     //取当前的基地址
-    void * baseAddress = CurrencyTools::getbaseAddress(&p_inet_pton);
-    char base[20] ={0};
-    sprintf(base,"%p",baseAddress);
+    void *baseAddress = CurrencyTools::getbaseAddress(&p_inet_pton);
+    char base[20] = {0};
+    sprintf(base, "%p", baseAddress);
     keyValue param1 = {"baseAddress", base};
     params->push_back(param1);
 
 
-    k_Log::f_writeLog(logType::socketM,*params);
+    k_Log::f_writeLog(logType::socketM, *params);
     delete params;
 
     return Result;

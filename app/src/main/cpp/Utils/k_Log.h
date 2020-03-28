@@ -25,7 +25,7 @@ enum logType{
     total,
     socketM
 };
-static class k_Log {
+class k_Log {
 public:
     static bool init(const char *fileName,JNIEnv *env);
     static bool f_writeLog(logType,vector<keyValue>& params);

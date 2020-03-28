@@ -36,6 +36,7 @@ bool k_Log::f_writeLog(logType type, vector<keyValue> &params) {
         fwrite(item.c_str(), sizeof(char), strlen(item.c_str()), loac);
         fflush(loac);
     }
+    params.clear();
     return true;
 }
 

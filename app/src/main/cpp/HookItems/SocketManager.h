@@ -8,7 +8,12 @@
 #include <AndHook.h>
 #include <k_Log.h>
 #include <netinet/in.h>
+#include <arpa/inet.h>
+#include <memory.h>
+#include <stdlib.h>
+#include <sys/socket.h>
 
+using namespace std;
 
 typedef int (*prt_socket)(int __af, int __type, int __protocol);
 
