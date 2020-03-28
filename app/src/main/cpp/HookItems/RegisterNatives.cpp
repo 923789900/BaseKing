@@ -23,14 +23,12 @@ void RegisterNatives::loadHookStart() {
     const JNINativeInterface *NativeInterface = &this->functions;
     void *targetAddress = (void *) NativeInterface->RegisterNatives;
     void *callAddress = (void *) &this->back_RegisterNatives;
-
     void **targetBack = (void **) &targetBack_RegisterNatives;
     AKHookFunction(targetAddress, callAddress, targetBack);
 }
 
 jint
-RegisterNatives::back_RegisterNatives(JNIEnv *env, jclass clazz, const JNINativeMethod *methods,
-                                      jint nMethods) {
+RegisterNatives::back_RegisterNatives(JNIEnv *env, jclass clazz, const JNINativeMethod *methods,jint nMethods) {
 
    if(nMethods < 0)
    {
@@ -38,9 +36,9 @@ RegisterNatives::back_RegisterNatives(JNIEnv *env, jclass clazz, const JNINative
        return nMethods;
    }
 
-    char* name =  getLibraryName(methods[0].fnPtr);
+    char* name = CurrencyTools::getLibraryName(methods[0].fnPtr);
+    void *baseAddress = CurrencyTools::getbaseAddress(methods[0].fnPtr);
     vector<keyValue> *params = new vector<keyValue>();
-
     for (int i = 0; i < nMethods; i++) {
 
 
@@ -53,8 +51,21 @@ RegisterNatives::back_RegisterNatives(JNIEnv *env, jclass clazz, const JNINative
 
         char classPtr[100] = {0};
         sprintf(classPtr, "%p", methods[i].fnPtr);
-        keyValue param1 = {"ClassPtr", classPtr};
+        keyValue param1 = {"MethodPtr", classPtr};
         params->push_back(param1);
+
+        char Address[20] = {0};
+        sprintf(Address, "%p", baseAddress);
+        keyValue param2 = {"baseAddress", Address};
+        params->push_back(param2);
+
+        char staticMethod[20] = {0};
+        sprintf(staticMethod, "%p", reinterpret_cast<void *>(methods[i].fnPtr - baseAddress));
+        keyValue param3 = {"staticMethodAddress", staticMethod};
+        params->push_back(param3);
+
+
+
 
         delete str;
         delete str2;
@@ -63,19 +74,6 @@ RegisterNatives::back_RegisterNatives(JNIEnv *env, jclass clazz, const JNINative
     k_Log::f_writeLog(logType::registerNative,name, *params);
     delete params;
     return targetBack_RegisterNatives(env, clazz, methods, nMethods);
-}
-
-char *RegisterNatives::getLibraryName(void *ftr) {
-    Dl_info info;
-
-    int status = dladdr(ftr, &info);
-    if (status != 0) {
-        vector<keyValue> *params = new vector<keyValue>();
-        const char *libName = info.dli_fname;
-        return const_cast<char *>(libName);
-    }
-
-    return nullptr;
 }
 
 /**

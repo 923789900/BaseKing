@@ -91,3 +91,14 @@ char *CurrencyTools::getLibraryName(void *ftr) {
 
     return "";
 }
+
+void *CurrencyTools::getbaseAddress(void *ftr) {
+    Dl_info info;
+
+    int status = dladdr(ftr, &info);
+    if (status != 0) {
+        return info.dli_fbase;
+    }
+
+    return nullptr;
+}

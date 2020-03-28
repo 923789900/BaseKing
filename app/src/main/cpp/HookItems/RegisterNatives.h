@@ -8,6 +8,7 @@
 #include <jni.h>
 #include "k_Log.h"
 #include <dlfcn.h>
+#include "CurrencyTools.h"
 
 
 typedef jint (*PRegisterNatives)(JNIEnv *,jclass clazz, const JNINativeMethod* methods, jint nMethods);
@@ -30,7 +31,6 @@ private:
     void loadHookStart_ClassRegister();
     static jint back_RegisterNatives(JNIEnv *env,jclass clazz, const JNINativeMethod* methods, jint nMethods);
     static jint back_cpRegisterNatives(jclass clazz, const JNINativeMethod* methods,jint nMethods);
-    static char* getLibraryName(void *);
 };
 
 

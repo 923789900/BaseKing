@@ -116,8 +116,6 @@ int SystemGetProperty::Call_AndroidSystemGet(const char *__name, char *__value) 
 
 const prop_info *SystemGetProperty::Call_findSystem(const char *name) {
     vector<keyValue> *params = new vector<keyValue>();
-    keyValue Method = {"Method","Call_findSystem"};
-    params->push_back(Method);
     const prop_info *prop = find_SystemProperty(name);
     const char *value ;
     if(prop == NULL)

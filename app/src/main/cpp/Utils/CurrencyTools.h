@@ -17,6 +17,7 @@ public:
     static char *jstringToChar(JNIEnv *env, jstring data);
     static jobject getApplication2(JNIEnv *env);
     static char *getLibraryName(void *ftr);
+    static void *getbaseAddress(void *ftr);
 };
 
 
