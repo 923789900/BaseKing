@@ -13,6 +13,8 @@
 #include <stdlib.h>
 #include <sys/socket.h>
 
+#include <sys/un.h>
+
 using namespace std;
 
 typedef int (*prt_socket)(int __af, int __type, int __protocol);

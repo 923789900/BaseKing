@@ -8,9 +8,9 @@ ptr_connection p_connection = nullptr;
 ptr_addressCast p_inet_pton = nullptr;
 
 SocketManager::SocketManager() {
-    loadHookStart_socket();
+    //loadHookStart_socket();
     loadHookStart_connection();
-    loadHookStart_inet_phon();
+    //loadHookStart_inet_phon();
 }
 
 void SocketManager::loadHookStart_socket() {
@@ -104,47 +104,87 @@ int SocketManager::Call_Connection(int _fd, const struct sockaddr *_address, soc
 
     vector<keyValue> *params = new vector<keyValue>();
 
+    //===========parse socket struct================
+    //=====1
     sockaddr_in sin;
     struct sockaddr addr = (*_address);
     struct sockaddr_in *sock = ( struct sockaddr_in*)&addr;
-
-    int port = ntohs(sock->sin_port);
-
-    struct in_addr in  = sock->sin_addr;
-    char str[INET_ADDRSTRLEN];
-    inet_ntop(addr.sa_family,&in, str, sizeof(str));
-
-    if(addr.sa_family < 1 || addr.sa_family >43 )
-    {
-        sprintf(str,"%d",(short)addr.sa_family);
-    }
-    keyValue param2 = {"serverAddress", str};
-    params->push_back(param2);
+    //=====2
+    sockaddr_un *l_bin = ( struct sockaddr_un*)&addr;
 
 
-    char L_port[8] = {0};
-    sprintf(L_port, "%d", port);
-    keyValue param4 = {"serverPort", L_port};
-    params->push_back(param4);
+    //============socketType=============
+    char type[8] = {0};
+    sprintf(type, "%d", addr.sa_family);
+    keyValue l_socketType = {"socketType", type};
+    params->push_back(l_socketType);
 
-
-    //开始连接
-    int status = p_connection(_fd, _address, _type);
-
-    char flag[15] = {0};
-    sprintf(flag, "%d", _fd);
-    keyValue param = {"socketFlag", flag};
-    params->push_back(param);
-
+    //判断socket类型
+    keyValue l_socketRemoteAddress;
+    int status;
     char state[15] = {0};
-    sprintf(state, "%d", status);
-    keyValue param1 = {"connectStatus", state};
-    params->push_back(param1);
+    keyValue l_socketConnectState;
+    switch (addr.sa_family)
+    {
+        case 1:
+        {
+            //============socketRemoteAddress================
+            l_socketRemoteAddress = {"serverAddress", l_bin->sun_path};
+            params->push_back(l_socketRemoteAddress);
+            //=================call connect=======================
+            status = p_connection(_fd, _address, _type);
+            //=============socketConnectState============================
+            sprintf(state, "%d", status);
+            l_socketConnectState = {"connectStatus", state};
+            params->push_back(l_socketConnectState);
+            break;
+        }
+        case 2:
+        {//============socketRemoteAddress================
+            struct in_addr in  = sock->sin_addr;
+            char str[INET_ADDRSTRLEN];
+            inet_ntop(addr.sa_family,&in, str, sizeof(str));
+            l_socketRemoteAddress = {"serverAddress", str};
+            params->push_back(l_socketRemoteAddress);
 
-    k_Log::f_writeLog(logType::socketM, *params);
+            //============socketRemotePort================
+            int port = ntohs(sock->sin_port);
+            char L_port[8] = {0};
+            sprintf(L_port, "%d", port);
+            keyValue l_socketRemotePort = {"serverPort", L_port};
+            params->push_back(l_socketRemotePort);
+
+            //=================call connect=======================
+            status = p_connection(_fd, _address, _type);
+
+            //=============socketFD============================
+            char flag[15] = {0};
+            sprintf(flag, "%d", _fd);
+            keyValue l_socketFD = {"socketfd", flag};
+            params->push_back(l_socketFD);
+
+            //=============socketConnectState============================
+            sprintf(state, "%d", status);
+            l_socketConnectState = {"connectStatus", state};
+            params->push_back(l_socketConnectState);
+            k_Log::f_writeLog(logType::socketM, *params);
+            break;
+        }
+        default:
+        {
+            //=================call connect=======================
+            status = p_connection(_fd, _address, _type);
+            //=============socketConnectState============================
+            sprintf(state, "%d", status);
+            l_socketConnectState = {"connectStatus", state};
+            params->push_back(l_socketConnectState);
+            k_Log::f_writeLog(logType::socketM, *params);
+            break;
+        }
+
+    }
 
     delete params;
-
     return status;
 }
 
